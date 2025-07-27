@@ -1,2 +1,0 @@
-nd
-#include <iostream>
