@@ -44,7 +44,7 @@ void check(std::vector<int> W, std::vector<int> P, int max, int size , int a)
 		{
 			best=n1;
 		}
-		
+// հա տ ուկ դեպ քերի հա մա ր
 		int amount2=0;
 		int weight2=0;
 		bestCase n2;

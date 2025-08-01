@@ -49,7 +49,7 @@ void reverseV(std::vector<int>&v, int size, int max)
 int main()
 {
 	std::vector<int> v= {3,5,6,7,8};
-	int maxSum=12;
+	int maxSum=1;
 	checkSum(v, v.size(), maxSum ,0);
 	reverseV(v, v.size(),maxSum);
 	return 0;
