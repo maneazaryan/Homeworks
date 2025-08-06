@@ -1,37 +1,5 @@
-#include <iostream>	
+#include "fraction.h"
 
-class Fraction{
-	private:
-		int m_numerator;
-		int m_denominator;
-		int m_simplify(int a, int b)const;
-	public:
-		//constructurs
-		Fraction(): m_numerator(0), m_denominator(1){}
-		Fraction(int a , int b){
-			if(b==0){
-				std::cout<<"Error. Denominator  can't be 0"<<std::endl;
-				m_numerator=0;
-				m_denominator=1;
-				return;
-			}
-			m_numerator=a;
-			m_denominator=b;
-		}
-		double m_toDouble(int a , int b) const;
-
-		Fraction operator +(const Fraction& other)const;
-		Fraction operator -(const Fraction& other)const;
-		Fraction operator * (const Fraction& other)const;
-		Fraction operator / (const Fraction& other) const;
-		
-		bool operator <(const Fraction& other)const ;
-		bool operator >(const Fraction& other)const ;
-		bool operator ==(const Fraction& other)const ;
-		bool operator !=(const Fraction& other)const ;
-
-		void print();
-};
 void Fraction::print(){
 	std::cout<< m_numerator<<'/'<<m_denominator<<std::endl;	
 }
@@ -108,27 +76,3 @@ bool Fraction::operator !=(const Fraction& other)const{
 	double second=m_toDouble(other.m_numerator, other.m_denominator);
 	return first!=second;
 }
-int main()
-{
-	Fraction n1(1,2);
-	Fraction n2(3,5);
-
-	std::cout<<"add"<<std::endl;
-	(n1+n2).print();
-
-	std::cout<<"subtraction"<<std::endl;
-	(n1-n2).print();
-
-	std::cout<<"mult"<<std::endl;
-	(n1*n2).print();
-
-	std::cout<<"division"<<std::endl;
-	(n1/n2).print();
-	
-	std::cout<<"n1<n2 : "<<(n1<n2)<<std::endl;
-	std::cout<<"n1>n2 : "<<(n1>n2)<<std::endl;
-	std::cout<<"n1==n2 : "<<(n1==n2)<<std::endl;
-	std::cout<<"n1!=n2 : "<<(n1!=n2)<<std::endl;
-
-	return 0;
-}	
