@@ -57,22 +57,14 @@ Fraction Fraction::operator / (const Fraction& other) const{
 	return Fraction(numerator, denominator); 
 }
 bool Fraction::operator <(const Fraction& other)const {
-	double first=m_toDouble(m_numerator, m_denominator);
-	double second=m_toDouble(other.m_numerator, other.m_denominator);
-	return first<second;
+	return (m_numerator*other.m_denominator<other.m_numerator * m_denominator);
 }
 bool Fraction::operator >(const Fraction& other)const {
-	double first=m_toDouble(m_numerator, m_denominator);
-	double second=m_toDouble(other.m_numerator, other.m_denominator);
-	return first>second;
+	return (m_numerator*other.m_denominator>other.m_numerator * m_denominator);
 }
 bool Fraction::operator ==(const Fraction& other)const {
-	double first=m_toDouble(m_numerator, m_denominator);
-	double second=m_toDouble(other.m_numerator, other.m_denominator);
-	return first==second;
+	return (m_numerator*other.m_denominator==other.m_numerator * m_denominator);
 }
 bool Fraction::operator !=(const Fraction& other)const{
-	double first=m_toDouble(m_numerator, m_denominator);
-	double second=m_toDouble(other.m_numerator, other.m_denominator);
-	return first!=second;
+	return !(*this==other);
 }
