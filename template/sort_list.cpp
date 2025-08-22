@@ -3,14 +3,14 @@
 #include <algorithm>
 #include <string>
 
-bool rule(const std::string& a , const std::string& b)
+/*bool rule(const std::string& a , const std::string& b)
 {
 	if(a.size()!=b.size())
 	{
 		return a.size()<b.size();
 	}
 	return a<b;
-}	
+}	*/
 int main()
 {
 	std::vector<std::string> names = {"Bob", "Alex", "Christina", "Zoe", "Anna"};
