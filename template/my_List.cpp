@@ -15,16 +15,19 @@ class List{
 	public:
 	List();
 	~List(); 
-	void Print()const;
-	void Push_back(const T& value);
-	void Push_front(const T& value);
-	void Pop_back();
-	void Pop_front();
-	bool Empty() const;
-	size_t Get_size() const; 
-	void Clear();
-	T& Front();
-	T& Back();
+	void print()const;
+	void push_back(const T& value);
+	void push_front(const T& value);
+	void pop_back();
+	void pop_front();
+	bool empty() const;
+	size_t size() const; 
+	void clear();
+	T& front();
+	T& back();
+	Node<T>* begin(){return m_head;};
+	Node<T>* end(){return nullptr;};
+	class iterator;
 };
 //constructor, destructor
 template<typename T>
@@ -35,11 +38,11 @@ List<T>::List(){
 }
 
 template<typename T>
-List<T>::~List(){ Clear(); } 
+List<T>::~List(){ clear(); } 
 
 //functions
 template<typename T>
-void List<T>::Print()const
+void List<T>::print()const
 {
 	Node<T>* p = m_head;	
 	if(m_size == 1)
@@ -54,12 +57,12 @@ void List<T>::Print()const
 	std::cout<<std::endl;
 }
 
-	template<typename T>
-void List<T>::Push_back(const T& value)
+template<typename T>
+void List<T>::push_back(const T& value)
 {
 	m_size++;
 	Node<T>* node=new Node<T>(value);
-	if(m_head==nullptr)
+	if(m_head==nullptr && m_size==1)
 	{
 		m_head=node;
 	}
@@ -71,12 +74,12 @@ void List<T>::Push_back(const T& value)
 	m_tail=node;
 }
 
-	template<typename T>
-void List<T>::Push_front(const T& value)
+template<typename T>
+void List<T>::push_front(const T& value)
 {
 	m_size++;
 	Node<T>* node = new Node<T>(value);
-	if(m_head==nullptr)
+	if(m_head==nullptr && m_size==1)
 	{
 		m_head = node;
 		m_tail = node;
@@ -90,8 +93,7 @@ void List<T>::Push_front(const T& value)
 }
 
 template<typename T>
-void List<T>::Pop_back(){
-
+void List<T>::pop_back(){
 	if(m_size==1)
 	{
 		delete m_head;
@@ -110,7 +112,7 @@ void List<T>::Pop_back(){
 }
 
 template<typename T>
-void List<T>::Pop_front()
+void List<T>::pop_front()
 {
 	if(m_size==1)
 	{
@@ -129,56 +131,78 @@ void List<T>::Pop_front()
 }
 
 template<typename T>
-bool List<T>::Empty() const
-{
-	return m_size==0;
-}
+bool List<T>::empty() const{return m_size==0;}
 
 template<typename T>
-size_t List<T>::Get_size() const
-{
-	return m_size;
-}
+size_t List<T>::size() const{return m_size;}
 
 template<typename T>
-void List<T>::Clear()
+void List<T>::clear()
 {	
 	while(m_size>0 )
 	{
-		Pop_back();
+		pop_back();
 	}
 }
 
 template<typename T>
-T& List<T>::Front()
-{
-	return m_head->m_data;
-}
+T& List<T>::front(){return m_head->m_data;}
 
-	template<typename T>
-T& List<T>::Back()
-{
-	return m_tail->m_data;
-}
+template<typename T>
+T& List<T>::back(){return m_tail->m_data;}
 
+template<typename T>
+class List<T>::iterator
+{
+	private:
+		Node<T>* m_ptr;
+	public:
+		iterator(Node <T>* p = nullptr): m_ptr(p) {};
+		T& operator*(){ return m_ptr->m_data;};
+		T* operator->(){return this;};
+
+		// Increment / Decrement
+		iterator& operator++()
+		{
+			m_ptr=m_ptr->m_next;
+			return *this;
+		}
+		iterator& operator--()
+		{
+			m_ptr=m_ptr->m_prev;
+			return *this;
+		}
+
+		// Comparison
+		bool operator==(const iterator& other) const;
+		bool operator!=(const iterator& other) const;
+		bool operator<(const iterator& other) const;
+		bool operator>(const iterator& other) const;
+};
 int main()
 {
 	List<int> n1;
-	n1.Push_back(12);
-	n1.Push_front(5);
-	n1.Print();
-	n1.Pop_back();
-	std::cout<<"after pop_back" <<std::endl;
-	n1.Print();
-	n1.Push_front(6);
-	n1.Push_back(4);
-	n1.Print();
-	n1.Pop_front();
-	std::cout<<"after pop_front" <<std::endl;
-	n1.Print();
-	std::cout<<"Size is : "<<n1.Get_size()<<std::endl;	
-	n1.Clear();
-	n1.Print();
-	std::cout<<"Size is : "<<n1.Get_size()<<std::endl;	
+	n1.push_back(1);
+	n1.push_back(2);
+	n1.push_front(5);
+	n1.print();
+//	n1.pop_back();
+//	std::cout<<"after pop_back" <<std::endl;
+//	n1.print();
+//	n1.push_front(6);
+//	n1.push_back(4);
+//	n1.print();
+//	n1.pop_front();
+//	std::cout<<"after pop_front" <<std::endl;
+//	n1.print();
+
+	std::cout<<"Size is : "<<n1.size()<<std::endl;	
+//	n1.clear();
+//	n1.print();
+//	std::cout<<"Size is : "<<n1.size()<<std::endl;	
+//	std::cout<<"Front is : "<<n1.front()<<std::endl;	
+	List<int>::iterator it = n1.begin() ;
+	std::cout<<*(++it)<<std::endl;
+	std::cout<<*(--it)<<std::endl;
 	return 0;
 }	
