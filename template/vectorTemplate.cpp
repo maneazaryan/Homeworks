@@ -24,7 +24,7 @@ class MyVector{
 		//operators
 		MyVector& operator=(const MyVector& other);
 		T& operator[](int index);
-		T operator[](int index) const;
+		const T& operator[](int index) const;
 };
 
 template<typename T>
@@ -140,7 +140,7 @@ T& MyVector<T>::operator[](int index)
 }
 
 template<typename T>
-T MyVector<T>::operator[](int index) const
+const T& MyVector<T>::operator[](int index) const
 {
 	return m_arr[index];
 }
