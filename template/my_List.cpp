@@ -31,11 +31,7 @@ class List{
 };
 //constructor, destructor
 template<typename T>
-List<T>::List(){
-	m_head = nullptr;
-	m_tail = nullptr;
-	m_size = 0;
-}
+List<T>::List(): m_head(nullptr), m_tail(nullptr), m_size(0){}
 
 template<typename T>
 List<T>::~List(){ clear(); } 
@@ -46,11 +42,11 @@ void List<T>::print()const
 {
 	Node<T>* p = m_head;	
 	if(m_size == 1)
-		std::cout<<p->m_data<<' ';
+		std::cout << p->m_data<<' ';
 	else if (m_size > 1)
 	{	
 		while(p!=nullptr){
-			std::cout<<p->m_data<<' ';
+			std::cout << p->m_data<<' ';
 			p = p->m_next;
 		}
 	}
@@ -81,15 +77,14 @@ void List<T>::push_front(const T& value)
 	Node<T>* node = new Node<T>(value);
 	if(m_head==nullptr && m_size==1)
 	{
-		m_head = node;
 		m_tail = node;
 	}
 	else
 	{
 		node->m_next=m_head;
 		m_head->m_prev=node;
-		m_head=node;
 	}
+	m_head = node;
 }
 
 template<typename T>
@@ -97,18 +92,15 @@ void List<T>::pop_back(){
 	if(m_size==1)
 	{
 		delete m_head;
-		m_size--;
-		return;	
 	}
-	else if(m_size>1){
-
+	else if(m_size>1)
+	{
 		Node<T>* last = m_tail;
 		m_tail=last->m_prev;
 		m_tail->m_next= nullptr;
-
-		m_size--;
 		delete last;
 	}
+	m_size--;
 }
 
 template<typename T>
@@ -117,17 +109,14 @@ void List<T>::pop_front()
 	if(m_size==1)
 	{
 		delete m_head;
-		m_size--;
-		return;
 	}
 	else if(m_size>1){
 		Node<T>* first = m_head;
 		m_head=first->m_next;
 		m_head->m_prev=nullptr;
-
 		delete first;
-		m_size--;
 	}
+	m_size--;
 }
 
 template<typename T>
@@ -139,10 +128,7 @@ size_t List<T>::size() const{return m_size;}
 template<typename T>
 void List<T>::clear()
 {	
-	while(m_size>0 )
-	{
-		pop_back();
-	}
+	while(m_size>0 ) pop_back();
 }
 
 template<typename T>
@@ -174,10 +160,22 @@ class List<T>::iterator
 		}
 
 		// Comparison
-		bool operator==(const iterator& other) const;
-		bool operator!=(const iterator& other) const;
-		bool operator<(const iterator& other) const;
-		bool operator>(const iterator& other) const;
+		bool operator==(const iterator& other) const
+		{
+			return m_ptr==other.m_ptr;
+		}
+		bool operator!=(const iterator& other) const
+		{
+			return m_ptr!=other.m_ptr;
+		}
+		bool operator<(const iterator& other) const
+		{
+			return m_ptr<other.m_ptr;
+		}
+		bool operator>(const iterator& other) const
+		{
+			return m_ptr<other.m_ptr;
+		}
 };
 int main()
 {
@@ -186,7 +184,7 @@ int main()
 	n1.push_back(2);
 	n1.push_front(5);
 	n1.print();
-//	n1.pop_back();
+	n1.pop_back();
 //	std::cout<<"after pop_back" <<std::endl;
 //	n1.print();
 //	n1.push_front(6);
@@ -202,7 +200,9 @@ int main()
 //	std::cout<<"Size is : "<<n1.size()<<std::endl;	
 //	std::cout<<"Front is : "<<n1.front()<<std::endl;	
 	List<int>::iterator it = n1.begin() ;
-	std::cout<<*(++it)<<std::endl;
-	std::cout<<*(--it)<<std::endl;
+	
+	for(it; it != n1.end(); ++it) std::cout<<*it << ' ';
+//	std::cout<<*(++it)<<std::endl;
+//	std::cout<<*(--it)<<std::endl;
 	return 0;
 }	
