@@ -5,33 +5,37 @@ struct Node{
 	Node<T>* m_prev;
 	Node<T>* m_next;
 	Node(const T& value) : m_data(value), m_prev(nullptr), m_next(nullptr) {}
+	Node() : m_data(0), m_prev(nullptr), m_next(nullptr) {}
 };
 
 template<typename T>
 class List{
 	Node<T>* m_head; 
 	Node<T>* m_tail; 
+	Node<T>* m_end;
 	size_t m_size;
 	public:
-	List();
-	~List(); 
-	void print()const;
-	void push_back(const T& value);
-	void push_front(const T& value);
-	void pop_back();
-	void pop_front();
-	bool empty() const;
-	size_t size() const; 
-	void clear();
-	T& front();
-	T& back();
-	Node<T>* begin(){return m_head;};
-	Node<T>* end(){return nullptr;};
-	class iterator;
+		List();
+		~List(); 
+		void print()const;
+		void push_back(const T& value);
+		void push_front(const T& value);
+		void pop_back();
+		void pop_front();
+		bool empty() const;
+		size_t size() const; 
+		void clear();
+		T& front();
+		T& back();
+		class iterator;
+		iterator begin(){return m_head;};
+		iterator end(){return m_end;};
 };
 //constructor, destructor
 template<typename T>
-List<T>::List(): m_head(nullptr), m_tail(nullptr), m_size(0){}
+List<T>::List(): m_head(nullptr), m_tail(nullptr), m_size(0){
+	m_end = new Node<T>();
+}
 
 template<typename T>
 List<T>::~List(){ clear(); } 
@@ -44,8 +48,8 @@ void List<T>::print()const
 	if(m_size == 1)
 		std::cout << p->m_data<<' ';
 	else if (m_size > 1)
-	{	
-		while(p!=nullptr){
+	{
+		while(p!= m_end){
 			std::cout << p->m_data<<' ';
 			p = p->m_next;
 		}
@@ -68,6 +72,8 @@ void List<T>::push_back(const T& value)
 		m_tail->m_next=node;
 	}
 	m_tail=node;
+	node->m_next = m_end;
+	m_end->m_prev = node;
 }
 
 template<typename T>
@@ -77,6 +83,8 @@ void List<T>::push_front(const T& value)
 	Node<T>* node = new Node<T>(value);
 	if(m_head==nullptr && m_size==1)
 	{
+		node->m_next=m_end;
+		m_end->m_prev=node;
 		m_tail = node;
 	}
 	else
@@ -97,7 +105,8 @@ void List<T>::pop_back(){
 	{
 		Node<T>* last = m_tail;
 		m_tail=last->m_prev;
-		m_tail->m_next= nullptr;
+		m_end->m_prev=m_tail;
+		m_tail->m_next= m_end;
 		delete last;
 	}
 	m_size--;
@@ -128,6 +137,7 @@ size_t List<T>::size() const{return m_size;}
 template<typename T>
 void List<T>::clear()
 {	
+	delete m_end;
 	while(m_size>0 ) pop_back();
 }
 
@@ -144,18 +154,20 @@ class List<T>::iterator
 		Node<T>* m_ptr;
 	public:
 		iterator(Node <T>* p = nullptr): m_ptr(p) {};
-		T& operator*(){ return m_ptr->m_data;};
-		T* operator->(){return this;};
+		T& operator*(){ return m_ptr -> m_data;}
+		T* operator->(){ return &(m_ptr -> m_data);}
 
 		// Increment / Decrement
 		iterator& operator++()
 		{
-			m_ptr=m_ptr->m_next;
+			if(m_ptr->m_next!=nullptr)
+				m_ptr=m_ptr->m_next;
 			return *this;
 		}
 		iterator& operator--()
 		{
-			m_ptr=m_ptr->m_prev;
+			if(m_ptr->m_prev!=nullptr)
+				m_ptr=m_ptr->m_prev;
 			return *this;
 		}
 
@@ -183,26 +195,26 @@ int main()
 	n1.push_back(1);
 	n1.push_back(2);
 	n1.push_front(5);
+	n1.push_front(6);
+	n1.push_back(4);
 	n1.print();
-	n1.pop_back();
-//	std::cout<<"after pop_back" <<std::endl;
-//	n1.print();
-//	n1.push_front(6);
-//	n1.push_back(4);
-//	n1.print();
-//	n1.pop_front();
-//	std::cout<<"after pop_front" <<std::endl;
-//	n1.print();
-
 	std::cout<<"Size is : "<<n1.size()<<std::endl;	
-//	n1.clear();
-//	n1.print();
-//	std::cout<<"Size is : "<<n1.size()<<std::endl;	
-//	std::cout<<"Front is : "<<n1.front()<<std::endl;	
+	n1.pop_back();
+	std::cout<<"after pop_back" <<std::endl;
+	n1.print();
+	n1.pop_front();
+	std::cout<<"after pop_front" <<std::endl;
 	List<int>::iterator it = n1.begin() ;
-	
-	for(it; it != n1.end(); ++it) std::cout<<*it << ' ';
-//	std::cout<<*(++it)<<std::endl;
-//	std::cout<<*(--it)<<std::endl;
+	for(auto it= n1.begin(); it != n1.end(); ++it) std::cout<<*it << ' ';
+	std::cout<<"\n"<<std::endl;
+	std::cout<<"*it  "<<*(it)<<std::endl;
+	std::cout<<"*++it  "<<*(++it)<<std::endl;
+	std::cout<<"*--it  "<<*(--it)<<std::endl;
+
+	std::cout<<"Front is : "<<n1.front()<<std::endl;	
+	std::cout<<"Size is : "<<n1.size()<<std::endl;	
+	n1.clear();
+	n1.print();
+	std::cout<<"Size is : "<<n1.size()<<std::endl;	
 	return 0;
 }	
