@@ -3,39 +3,40 @@
 #include <map>
 #include <utility>
 #include <memory>
-class RAM{
-	private:
-		std::map<int , std::pair<std::string, int> > m_ram;
-	public:
-		RAM(){}
-		RAM(const std::map<int, std::pair<std::string, int>>& m): m_ram(m){}
+class RAM
+{
+		private:
+				std::map<int , std::pair<std::string, int> > m_ram;
+		public:
+				RAM(){}
+				RAM(const std::map<int, std::pair<std::string, int>>& m): m_ram(m){}
 
-		std::pair<std::string, int > readFromRAM(int row) 
-		{
-			if(m_ram.find(row) != m_ram.end())
-				return m_ram[row];
-			else return {"", 0};
-		};
+				std::pair<std::string, int > readFromRAM(int row) 
+				{
+						if(m_ram.find(row) != m_ram.end())
+								return m_ram[row];
+						else return {"", 0};
+				};
 
-		void writeInRAM(int row, const std::string& value1, int value2)
-		{
-			m_ram[row]={value1, value2};
-		};
-//for dbg , delete  
-		void printRam()const
-		{
-			for(auto& [key, value] :m_ram)
-				std::cout<<key<<' '<< value.first<<' '<<value.second<<std::endl;
-		}
+				void writeInRAM(int row, const std::string& value1, int value2)
+				{
+						m_ram[row]={value1, value2};
+				}
+//for dbg   
+				void printRam()const
+				{
+						for(auto& [key, value] :m_ram)
+								std::cout<<key<<' '<< value.first<<' '<<value.second<<std::endl;
+				}
 };
-//run , parametr krchatel  
 class Command{
 	public:
 		virtual void doCommand(RAM& ram, int& ACC, int& PC, int rAddress, bool& run)=0;
+		virtual ~Command(){};
 };
 class LDA: public Command {
 	public:
-		void doCommand(RAM& ram , int& ACC, int& PC, int rAddress, bool& run)override{
+		void doCommand(RAM& ram , int& ACC, int& , int rAddress, bool& /*run*/)override{
 			std::pair<std::string, int> data= ram.readFromRAM(rAddress);
 			ACC=data.second;
 		}
@@ -43,7 +44,7 @@ class LDA: public Command {
 
 class SUB: public Command{
 	public:
-		void doCommand(RAM& ram , int& ACC, int& PC, int rAddress, bool& run)override{
+		void doCommand(RAM& ram , int& ACC, int& /*PC*/ , int rAddress, bool& /*run*/)override{
 			std::pair<std::string, int> data= ram.readFromRAM(rAddress);
 			ACC -= data.second;
 		}
@@ -51,25 +52,25 @@ class SUB: public Command{
 
 class STA: public Command{
 	public:
-		void doCommand(RAM& ram , int& ACC, int& PC, int rAddress, bool& run)override{
+		void doCommand(RAM& ram , int& ACC, int& /*PC*/, int rAddress, bool& /*run*/)override{
 			ram.writeInRAM(rAddress,"DAT",ACC);
 		}
 };
 class BRZ: public Command{
 	public:
-		void doCommand(RAM& ram , int& ACC, int& PC, int rAddress, bool& run)override{
+		void doCommand(RAM& /*ram*/, int& ACC, int& PC, int rAddress, bool& /*run*/)override{
 			if(ACC==0) PC=rAddress;
 		}
 };
 class BRA: public Command{
 	public:
-		void doCommand(RAM& ram , int& ACC, int& PC, int rAddress, bool& run)override{
+		void doCommand(RAM& /*ram*/, int& /*ACC*/ , int& PC, int rAddress, bool& /*run*/)override{
 			PC=rAddress;
 		}
 };
 class HLT: public Command{
 	public:
-		void doCommand(RAM& ram , int& ACC, int& PC, int rAddress, bool& run)override{
+		void doCommand(RAM& /*ram*/, int& /*ACC*/, int& /*PC*/, int , bool& run)override{
 			run=false;
 		}
 };
@@ -90,14 +91,19 @@ class Manage{
 class CPU{
 	public:
 		CPU(RAM& x) : m_ram(x){}
-		void runProgram(){
-			while(m_run){
-				int oldPC=m_PC;
-				std::pair<std::string, int> IR = fetch();
+		void execute(){
+				while(m_run){
+						int oldPC=m_PC;
+						std::pair<std::string, int> IR = fetch();
+						std::unique_ptr<Command> step=Manage::getCommand(IR.first);
 
-				execute(IR.first, IR.second);
-				if(oldPC==m_PC)m_PC++;
-			}
+						if(step){
+								step->doCommand(m_ram ,m_ACC ,m_PC , IR.second, m_run);
+						}
+						else m_run=false;	
+
+						if(oldPC==m_PC)m_PC++;
+				}
 		}
 	private:
 		int m_ACC=0;
@@ -108,13 +114,6 @@ class CPU{
 		std::pair<std::string, int> fetch()
 		{
 			return m_ram.readFromRAM(m_PC);
-		}
-		void execute(const std::string& nextC, int rAddress){
-			std::unique_ptr<Command> step=Manage::getCommand(nextC);
-			if(step){
-				step->doCommand(m_ram ,m_ACC ,m_PC , rAddress, m_run);
-			}
-			else m_run=false;	
 		}
 };
 
@@ -130,13 +129,13 @@ int main()
 			{10, {"DAT", 10}},
 			{80, {"DAT", 5000}}
 			});
-//for dbg , delet
+//for dbg 
 	ram.printRam();
 	std::cout<<std::endl;
 
 	CPU cpu(ram);
-	cpu.runProgram();
-//for dbg , delete   
+	cpu.execute();
+//for dbg    
 	ram.printRam();
 	return 0;
 }	
