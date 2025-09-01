@@ -13,7 +13,7 @@ class Visitor{
 class Animal{
     std::string m_name;
     public:
-        Animal(std::string name): m_name(name){};
+        Animal(std::string name) : m_name(name){};
         virtual const std::string& GetName() const
             {
 				return m_name;
