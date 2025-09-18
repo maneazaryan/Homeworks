@@ -1,11 +1,11 @@
 // first compile this file using -> g++ % -o child 
 #include <iostream>	
-int main()
+#include <string>
+int main(int argc, char* argv[])
 {	
-	int num;
-	std::cout<< "Enter a number"<<std::endl;
-	std::cin>> num ;
-	for(int i = num-1 ; i > 0 ; i--)
+	unsigned long long num = std::stoull(argv[1]);
+	for(unsigned long long i = num-1 ; i > 0 ; i--)
 		num *= i; 
-	return num ;
+	std::cout << num;
+	return 0 ;
 }	
