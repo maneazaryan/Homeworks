@@ -5,7 +5,6 @@
 const int Count = 1;
 std::vector<int> shared;
 
-pthread_mutex_t mutex;
 sem_t empty;
 sem_t full;
 
@@ -21,32 +20,27 @@ void print()
 void* producer(void* args)
 {
 	sem_wait(&empty);
-	pthread_mutex_lock(&mutex);
 	if(shared.size() != Count)
 	{
 		shared.push_back(1);
 	}
 	print();
-	pthread_mutex_unlock(&mutex);
 	sem_post(&full);
 	return 0;
 }
 void* consumer(void* args)
 {
 	sem_wait(&full);
-	pthread_mutex_lock(&mutex);
 	if(!shared.empty())
 	{
 		shared.pop_back();
 	}
 	print();
-	pthread_mutex_unlock(&mutex);
 	sem_post(&empty);
 	return 0;
 }
 int main()
 {
-	pthread_mutex_init(&mutex, NULL);
 	sem_init(&full, 0 , 0);
 	sem_init(&empty, 0 , 1);
 	pthread_t t1;
@@ -57,7 +51,6 @@ int main()
 
 	pthread_join(t1, NULL);
 	pthread_join(t2, NULL);
-	pthread_mutex_destroy(&mutex);
 	sem_destroy(&full);	
 	sem_destroy(&empty);	
 	return 0;
